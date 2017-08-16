@@ -1,0 +1,53 @@
+{#
+ # Homepage template
+ # ---------------
+ #
+ # When this template gets loaded, it will be because someone has accessed
+ # http://yoursite.com/ (without any URI). Craft checks to see if you have
+ # a Single section set to be the Homepage (as you do, by default), and
+ # loads the section’s Template (this file). A special ‘entry’ variable
+ # will already be set for you, assigned to the Homepage entry.
+ #
+ # It's worth noting that even if you didn't have a Homepage Single section,
+ # as long as this template remains at craft/templates/index.html, it
+ # would still be the one to get loaded when accessing http://yoursite.com/,
+ # albeit without an ‘entry’ variable already set for you.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+
+{% block content %}
+	<!-- <h2>{{ entry.title }}</h2> -->
+
+	{{ entry.body }}
+
+	<p style="margin-top: 1em; margin-bottom: 1.75em;"><a href="./kurse" class="important-link">Kursübersicht / course overview</a></p>
+
+  
+  {# Images #}
+  <div id="slider" style="margin-top: 1em;"> <!-- begin image slider -->
+  {% set imgField = entry.altimg %}
+  {% if imgField | length %}
+    {% for block in imgField %}
+      {% if block.type == "altimgblock" %}
+        {% set image = block.bild.first() %}
+        <!-- <img class="thumbnail" src="{{ image.getUrl('thumb') }}" width="{{image.getWidth('thumb') }}" height="{{ image.getHeight('thumb') }}" alt="{{ block.alttext }}"> -->
+        <img src="{{ image.url }}" alt="{{ block.alttext }}">
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <!-- Keine Bilder zu diesem Eintrag. -->
+  {% endif %}
+  </div> <!-- end image slider -->
+  <!--
+	<ul>
+		{% for entry in craft.entries.section('kurse').find() %}
+			<li><a href="{{ entry.url }}">{{ entry.title }}</a></li>
+		{% endfor %}
+	</ul>
+  -->
+
+{% endblock %}

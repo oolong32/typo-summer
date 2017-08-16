@@ -1,0 +1,28 @@
+{#
+# Themenfelder (aka. Kategorien) Übersichtsseite
+#}
+
+{% extends "_layout" %}
+{% set title = "Themenfelder" %}
+
+{% block content %}
+  <h2>Kurse nach Themenfeld</h2>
+
+      {% nav category in craft.categories.group("themenfelder") %}
+      <h3>{# <a href="{{ category.url }}"> #}{{ category.title }}{# </a> #}</h3>
+
+      {% set relatedEntries = craft.entries.relatedTo(category) %}
+      {% if relatedEntries|length %}
+        {% for entry in relatedEntries %}
+
+          {# Zu viel! Titel in Listenform sollte reichen #}
+          {# Oder: Akkordeon #}
+
+          <h4><a href="{{ entry.url }}">{{ entry.title }}</a></h4>
+          <!-- <p>{{ entry.body }}</p> -->
+        {% endfor %}
+      {% else %}
+        <p>Gegenwärtig gibt es keine Kurse zu diesem Thema.</p>
+      {% endif %}
+      {% endnav %}
+{% endblock %}

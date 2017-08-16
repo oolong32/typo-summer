@@ -1,0 +1,84 @@
+{#
+ # Kursübersicht template
+ # ----------------------
+ #
+ # This template is loaded whenever http://example.com/kurse is
+ # requested, because it is located at news/index.html in your
+ # craft/templates/ folder.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+{% set title = "Kurse" %}
+
+{% block content %}
+	<h2 id="course-overview">Kurse / <em>Courses</em></h2>
+
+	{% for entry in craft.entries.section('kurse').order('kursstart asc').find() %}
+
+    {% set categories = entry.themenfelder %}
+    {% if categories | length %}
+      {% nav category in categories %}
+        {# <p><em>Themenfeld: <a href="{{ category.url }}">{{ category.title }}</a></em></p> #}
+        <section class="{{ category.title }} course-link">
+      {% endnav %}
+    {% else %}
+      <section class="course-link">
+    {% endif %}
+        
+
+      {# Titel/Beschrieb zweisprachig, Dozierende, Daten #}
+
+      {% set courseMatrix = entry.kursbeschriebZweisprachig %}
+      {% if courseMatrix | length %}
+
+        {% for block in courseMatrix %}
+
+          {% if block.type == "daten" %}
+            {% set kursstart = block.kursstart %}
+            {% set kursende = block.kursende %}
+            {#
+               Kursdaten vergl. zum bestimmen, obs im gleichen Monat startet,
+               wie es endet. Falls nein, Monat auch zu beginn einblenden.
+            #}
+            {% set date_list_start = kursstart | split("-") %}
+            {% set date_list_end = kursende | split("-") %}
+            <p><small style:"font-family:monospace">{{ kursstart }}</small></p>
+            {% if date_list_start[1] == date_list_end[1] %}
+              {# Kurs beginnt und endet NICHT im gleichen Monat. #}
+              <p class="date"><time datetype="{{ kursstart }}">{{ kursstart | date("j") }}.</time>—<time datetime="{{ kursende }}">{{ kursende | date("j.n.Y") }}</time></p>
+            {% else %}
+              {# Kurs beginnt und endet NICHT im gleichen Monat. #}
+              <p class="date"><time datetype="{{ kursstart }}">{{ kursstart | date("j.n") }}.</time>—<time datetime="{{ kursende }}">{{ kursende | date("j.n.Y") }}</time></p>
+            {% endif %}
+          {% elseif block.type == "beschriebDeutsch" %}
+            {% set titelDe = block.kurstitelDeutsch %}
+            {% set beschrieb = block.kursbeschriebDeutsch %}
+            <p class="description-deutsch"><a href="{{ entry.url }}">{{ titelDe }}</a></p>
+            {# beschrieb | markdown #}
+          {% elseif block.type == "beschriebEnglisch" %}
+            {% set titelEng = block.kurstitelEnglisch %}
+            {% set description = block.kursbeschriebEnglisch %}
+            <p class="description-english"><a href="{{ entry.url }}#english">{{ titelEng }}</a></p>
+            {# description | markdown #}
+          {% endif %}
+
+        {% endfor %}
+
+      {% else %}
+        <p>No description whatsoever.</p>
+      {% endif %}
+      
+
+      </section>
+
+  {% endfor %}
+      <section class="about">
+        <p class="description-deutsch"><a href="https://typo-summer.ch/index.php?p=about">What is typo-summer?</a></p>
+        <p class="description-english"><a href="https://typo-summer.ch/index.php?p=about">What is typo-summer?</a></p>
+      </section>
+
+
+{% endblock %}

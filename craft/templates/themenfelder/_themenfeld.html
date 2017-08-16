@@ -1,0 +1,29 @@
+{#
+# Einzelnes Themenfeld (aka. Kategorie)
+#}
+
+{% extends "_layout" %}
+
+
+
+
+{% set slug = craft.request.getLastSegment() %}
+{% set title = slug|capitalize %}
+
+{% block content %}
+  {% nav category in craft.categories.group('themenfelder') %}
+    {% if category.slug|lower == slug|lower %}
+      <h2>{{ category.title }}</h2>
+      {% set relatedEntries = craft.entries.relatedTo(category) %}
+      {% if relatedEntries|length %}
+        {% for entry in relatedEntries %}
+
+          <h4><a href="{{ entry.url }}">{{ entry.title }}</a></h4>
+          <p>{{ entry.body }}</p>
+        {% endfor %}
+      {% else %}
+        <p>Gegenwärtig gibt es keine Kurse zu diesem Thema.</p>
+      {% endif %}
+    {% endif %}
+  {% endnav %}
+{% endblock %}

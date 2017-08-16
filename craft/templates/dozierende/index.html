@@ -1,0 +1,52 @@
+{#
+ # Kursübersicht template
+ # ----------------------
+ #
+ # This template is loaded whenever http://example.com/kurse is
+ # requested, because it is located at news/index.html in your
+ # craft/templates/ folder.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+{% set title = "Kurse" %}
+
+{% block content %}
+	<h2>Dozierende</h2>
+
+	{% for entry in craft.entries.section('dozierende').order().find() %} 
+      <section>
+
+        {# Text #}
+        {# Name/Vita zweisprachig #}
+
+        {% set dozMatrix = entry.dozierendezweisprachig %}
+        {% if dozMatrix | length %}
+
+          {% for block in dozMatrix %}
+
+            {% if block.type == "dozBeschriebDeutsch" %}
+              {% set name_de = block.name_DE %}
+              {% set vita_de = block.vita_DE %}
+              <h3 class="title_de"><a href="{{ entry.url }}">{{ name_de }}</a></h3>
+              {{ vita_de | markdown }}
+            {% elseif block.type == "dozBeschriebEnglisch" %}
+              {% set name_en = block.name_EN %}
+              {% set vita_en = block.vita_EN %}
+              <h3 class="title_en"><a href="{{ entry.url }}">{{ name_en }}</a></h3>
+              {{ vita_en | markdown }}
+            {% endif %}
+
+          {% endfor %}
+
+
+        {% else %}
+          <p>No description whatsoever.</p>
+        {% endif %}
+      </section>
+
+  {% endfor %}
+
+{% endblock %}

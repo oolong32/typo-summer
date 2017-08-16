@@ -1,0 +1,60 @@
+{#
+ # Einzeleintrag Dozierende template
+ # ------------------------------------
+ #
+ # This template gets loaded whenever a News entry’s URL is
+ # requested. That’s because the News section’s Template setting is
+ # set to “news/_entry”, the path to this template.
+ #
+ # When this template is loaded, it will already have an ‘entry’
+ # variable, set to the requested News entry.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+
+{% block content %}
+	<article>
+
+    {# Text #}
+    {# Name/Vita zweisprachig #}
+
+    {% set dozMatrix = entry.dozierendezweisprachig %}
+    {% if dozMatrix | length %}
+
+      {% for block in dozMatrix %}
+
+        {% if block.type == "dozBeschriebDeutsch" %}
+          {% set name_de = block.name_DE %}
+          {% set vita_de = block.vita_DE %}
+          <section class="description-german">
+            <h3 class="title_de">{# <a href="{{ entry.url }}"> #}{{ name_de }}{# </a> #}</h3>
+          {{ vita_de | markdown }}
+          </section>
+
+        {% elseif block.type == "dozBeschriebEnglisch" %}
+          {% set name_en = block.name_EN %}
+          {% set vita_en = block.vita_EN %}
+          <section class="description-english" id="english">
+            <h3 class="title_en">{# <a href="{{ entry.url }}"> #}{{ name_en }}{# </a> #}</h3>
+          {{ vita_en | markdown }}
+          </section>
+        {% endif %}
+
+      {% endfor %}
+
+
+    {% else %}
+      <p>No description whatsoever.</p>
+    {% endif %}
+
+    {# irgendso ein Test, im Zusammenhang mit der slug
+    {% for block in entry.dozierendezweisprachig.type('dozBeschriebDeutsch') %}
+    <p>{{ block.name_DE | replace({".": "", " ": "-"}) | lower }}</p>
+    {% endfor %}
+    #}
+
+	</article>
+{% endblock %}

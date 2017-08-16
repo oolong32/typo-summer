@@ -1,0 +1,179 @@
+{#
+ # Einzeleintrag Kursbeschrieb template
+ # ------------------------------------
+ #
+ # This template gets loaded whenever a News entry’s URL is
+ # requested. That’s because the News section’s Template setting is
+ # set to “news/_entry”, the path to this template.
+ #
+ # When this template is loaded, it will already have an ‘entry’
+ # variable, set to the requested News entry.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+
+{% block content %}
+	<article>
+
+  {# Ort #}
+  {% if entry.location | length %}
+    {% set location = entry.location %}
+  {% else %}
+    {% set location = "Zürich" %}
+  {% endif %}
+
+  {# Kurszeiten #}
+  {% if entry.anfangszeit | length and entry.endzeit | length %}
+    {% set anfangszeit = entry.anfangszeit %}
+    {% set endzeit = entry.endzeit %}
+  {% endif %}
+
+  {# Preis #}
+  {% if entry.preis | length %}
+    {% set preis = entry.preis %}
+  {% endif %}
+
+  {# Titel/Beschrieb zweisprachig, Dozierende, Daten #}
+
+  {% set courseMatrix = entry.kursbeschriebZweisprachig %}
+  {% if courseMatrix | length %}
+
+    {% for block in courseMatrix %}
+
+      {% if block.type == "daten" %}
+        {% set kursstart = block.kursstart %}
+        {% set kursende = block.kursende %}
+        {#
+           Kursdaten vergl. zum bestimmen, obs im gleichen Monat startet,
+           wie es endet. Falls nein, Monat auch zu beginn einblenden.
+        #}
+        {% set date_list_start = kursstart | split("-") %}
+        {% set date_list_end = kursende | split("-") %}
+        {% if date_list_start[1] == date_list_end[1] %}
+          {# Kurs beginnt und endet NICHT im gleichen Monat. #}
+          <p class="date"><time datetime="{{ kursstart }}">{{ kursstart | date("j") }}.</time>—<time datetime="{{ kursende }}">{{ kursende | date("j.n.Y") }}</time></p>
+        {% else %}
+          {# Kurs beginnt und endet NICHT im gleichen Monat. #}
+          <p class="date"><time datetime="{{ kursstart }}">{{ kursstart | date("j.n") }}.</time>—<time datetime="{{ kursende }}">{{ kursende | date("j.n.Y") }}</time></p>
+        {% endif %}
+      {% elseif block.type == "beschriebDeutsch" %}
+        {% set titelDe = block.kurstitelDeutsch %}
+        {% set beschrieb = block.kursbeschriebDeutsch %}
+
+        <section class="description-german">
+          <h3 class="title_de">{{ titelDe }}</h3>
+
+          {{ beschrieb | markdown }}
+
+        {# Auflistung Dozierenden  Versuch: kann man das hier oben speichern, aber unten reinhauen? #} 
+        {% if entry.auswahlDozierende | length %}
+          <h4>Dozierende</h4>
+          {% set dozierende = entry.auswahlDozierende %}
+          {% if dozierende | length > 1 %}
+            <ul>
+          {% endif %}
+          {% for doz in dozierende %}
+            {% set dozMatrix = doz.dozierendezweisprachig %}
+            {% for block in dozMatrix.type('dozBeschriebDeutsch') %}
+              {% if dozierende | length == 1 %}
+                <p><a href="{{ doz.url }}">{{ block.name_DE }}</a></p>
+              {% else %}
+                <li><a href="{{ doz.url }}">{{ block.name_DE }}</a></li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% if dozierende | length > 1 %}
+            </ul>
+          {% endif %}
+        {% else %}
+          <p>N.N.</p>
+        {% endif %}
+
+          <h4>Kursort</h4>
+          <p>{{ location | markdown }}</p>
+
+          <h4>Kurszeiten</h4>
+          <p><time datetime="{{ anfangszeit | date("G.i") }}">{{ anfangszeit | date("G.i") }}</time><span style="padding-left:2px;">—</span><time datetime="{{ endzeit | date("G.i") }}">{{ endzeit | date("G.i") }}</time> Uhr</p>
+
+          <h4>Kurskosten</h4>
+          <p>{{ preis }}.— CHF</p>
+
+          <p class="registration"><a href="registration/{{ titelDe }}" class="important-link">Anmelden: „{{ titelDe }}“</a></p>
+        </section>
+
+      {% elseif block.type == "beschriebEnglisch" %}
+        {% set titelEng = block.kurstitelEnglisch %}
+        {% set description = block.kursbeschriebEnglisch %}
+
+        <section id="english" class="description-english" lang="en">
+          <h3 class="title_en" lang="en">{{ titelEng }}</h3>
+          {{ description | markdown }}
+
+        {# Auflistung Dozierenden  Versuch: kann man das hier oben speichern, aber unten reinhauen? #} 
+        {% if entry.auswahlDozierende | length %}
+          <h4>Teachers</h4>
+          {% set dozierende = entry.auswahlDozierende %}
+          {% if dozierende | length > 1 %}
+            <ul>
+          {% endif %}
+          {% for doz in dozierende %}
+            {% set dozMatrix = doz.dozierendezweisprachig %}
+            {% for block in dozMatrix.type('dozBeschriebDeutsch') %}
+              {% if dozierende | length == 1 %}
+                <p><a href="{{ doz.url }}#english">{{ block.name_DE }}</a></p>
+              {% else %}
+                <li><a href="{{ doz.url }}#english">{{ block.name_DE }}</a></li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% if dozierende | length > 1 %}
+            </ul>
+          {% endif %}
+        {% else %}
+          <p>N.N.</p>
+        {% endif %}
+
+          <h4>Location</h4>
+          <p>{{ location | markdown }}</p>
+
+          <h4>Course hours</h4>
+          <p><time datetime="{{ anfangszeit | date("G.i") }}">{{ anfangszeit | date("G.i") }}</time><span style="padding-left:3px;">—</span><time datetime="{{ endzeit | date("G.i") }}">{{ endzeit | date("G.i") }}</time> o’clock</p>
+
+          <h4>Course fee</h4>
+          <p>CHF {{ preis }}.—</p>
+
+          <p class="registration"><a href="registration/{{ titelEng }}" class="important-link">Register for “{{ titelEng }}”</a></p>
+        </section>
+
+      {% endif %}
+
+    {% endfor %}
+
+  {% else %}
+    <p>No description whatsoever.</p>
+  {% endif %}
+  
+  {# Images #}
+  <div id="slider"> <!-- begin image slider -->
+  {% set imgField = entry.altimg %}
+  {% if imgField | length %}
+    {% for block in imgField %}
+      {% if block.type == "altimgblock" %}
+        {% set image = block.bild.first() %}
+        <!-- <img class="thumbnail" src="{{ image.getUrl('thumb') }}" width="{{image.getWidth('thumb') }}" height="{{ image.getHeight('thumb') }}" alt="{{ block.alttext }}"> -->
+        <img src="{{ image.url }}" alt="{{ block.alttext }}">
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <!-- Keine Bilder zu diesem Eintrag. -->
+  {% endif %}
+  </div> <!-- end image slider -->
+  {% if entry.copyright | length %}
+    <p class="copyright">{{ entry.copyright }}</p>
+  {% endif %}
+
+	</article>
+{% endblock %}

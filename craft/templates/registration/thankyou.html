@@ -1,0 +1,34 @@
+{#
+ # Kontaktformular template
+ # ------------------------
+ #
+ # This template is loaded whenever http://example.com/contact is
+ # requested, because it is located at kontakt/index.html in your
+ # craft/templates/ folder.
+ #
+ # See this page for more details on how Craft routes requests:
+ # http://craftcms.com/docs/routing
+ #}
+
+{% extends "_layout" %}
+{% set title = "Kurse" %}
+
+{% block content %}
+
+    <article>
+      <section class="description-german">
+        <h2>Danke</h2>
+        <p>Wir haben ihre Anmeldung erhalten und werden Sie in Kürze kontaktieren.</p>
+      </section>
+      <section class="description-english">
+        <h2 style="margin-top: 0.5em">Thank You</h2>
+        <p>We received your registration and will be in touch shortly.</p>
+      </section>
+
+      <section>
+        <p style="margin-top: 3em;"><a href="../kurse" class="important-link">Kursübersicht / course overview</a></p>
+    </section>
+    </article>
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{#
+ # Layout template
+ # ---------------
+ #
+ # This template defines your site’s global layout. It can be
+ # “extended” by other templates to fill in the gaps.
+ #
+ # See Twig’s Template Inheritance documentation for more details:
+ # http://twig.sensiolabs.org/doc/templates.html#template-inheritance
+ #}
+
+<!DOCTYPE html>
+
+<html lang="de_CH">
+
+<!--
+  Front- & backend by Josef Renner, 2017
+  http://josefrenner.ch
+-->
+
+<head>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Summer courses in typography, type design, and creative coding, in Zürich, Switzerland.">
+
+	<title>{% if title is defined %}{{ title }} - {% endif %}{{ siteName }}</title>
+
+	<link rel="home" href="{{ siteUrl }}" />
+  <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="{{ siteUrl }}style.css">
+  <link rel="stylesheet" href="{{ siteUrl }}js/ideal-imageslider/ideal-image-slider.css">
+  <link rel="stylesheet" href="{{ siteUrl }}js/ideal-imageslider/default.css">
+
+</head>
+
+<body>
+	<div id="wrap">
+
+		<header id="header">
+
+			<h1><a href="{{ siteUrl }}">{{ siteName }}</a></h1>
+
+		</header>
+
+		<main id="content" role="main">
+			{% block content %}
+				<p>If you see me, you haven’t set your <code>{% verbatim %}{% block content %}…{% endblock %}{% endverbatim %}</code> yet.</p>
+				<p>See Twig’s <a href="http://twig.sensiolabs.org/doc/templates.html#template-inheritance">Template Inheritance</a> documentation for an explanation.</p>
+			{% endblock %}
+		</main>
+
+		<footer id="footer">
+      <p>Contact:&nbsp;<a href="mailto:info@typo-summer.ch">info@typo&#8209;summer.ch</a></p>
+		</footer>
+
+	</div>
+  <script src="{{ siteUrl }}js/ideal-imageslider/ideal-image-slider.js"></script>
+</body>
+</html>
+
+<!--
+  ~~,..,UUUUUUUUUU,,.U
+-->

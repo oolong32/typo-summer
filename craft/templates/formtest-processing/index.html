@@ -1,0 +1,26 @@
+{#
+ # Kontaktformular Verarbeitung
+ # ----------------------------
+ #
+ #}
+
+{% extends "_layout" %}
+{% set title = "typo_summer" %}
+
+{% block content %}
+
+<h2>If you see this page, something went wrong.</h2>
+
+{% if craft.request.getPost() | length %}
+
+  {% set foo = craft.request.getPost('teilnehmer_name') %}
+  {% set bar = craft.request.getPost('teilnehmer_mail') %}
+  {% set baz = craft.request.getPost('teilnehmer_mitteilung') %}
+
+  <p>{{ foo }}</p>
+  <p>{{ bar }}</p>
+  <p>{{ baz }}</p>
+
+{% endif %}
+
+{% endblock %}

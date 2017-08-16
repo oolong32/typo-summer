@@ -1,0 +1,166 @@
+{#
+ # Kontaktformular template
+ # ------------------------
+ #
+ # Basiert auf https://mijingo.com/lessons/contact-form-in-craft-cms/
+ #}
+
+{% extends "_layout" %}
+{% set title = "Kurse" %}
+
+{% block content %}
+
+    {# Übermittlung gewählter Kurs #}
+    {% if matches[1] is defined %}
+      {% set chosen_course = matches[1] %}
+      <h2 class="registration-title">{{ chosen_course }}, Registration</h3>
+    {% else %}
+      {% set chosen_course = "undefined" %}
+      <h2>Course Registration</h2>
+      <p>Please tell us in the message field what course you’d like to register for.</p>
+    {% endif %}
+
+    {# Macro zum Errors filtern #}
+    {% macro errorList(errors) %}
+        {% if errors %}
+            {% for error in errors %}
+                <p><small class="error">{{ error }}</small></p>
+            {% endfor %}
+        {% endif %}
+    {% endmacro %}
+    {% from _self import errorList %}
+
+
+    <form method="post" action="">
+        {{ getCsrfInput() }}
+        <input type="hidden" name="action" value="contactForm/sendMessage">
+        <input type="hidden" name="redirect" value="/registration/thankyou">
+
+        <div class="hidden-row">
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" name="subject" value="{{ chosen_course }}">
+        </div>
+
+        <!-- Name -->
+        <div class="row">
+            <label for="name">Name</label>
+            <input
+              name="fromName"
+              type="text"
+              id="name"
+              placeholder="Name"
+              value="{% if message is defined %}{{ message.fromName }}{% endif %}"
+            required>
+        </div>
+
+        <!-- Address -->
+        <div class="row">
+            <label for="address">Address</label>
+            <input
+              name="message[street]"
+              type="text"
+              id="address"
+              placeholder="123 Some Street"
+              autocomplete="shipping street-address"
+              value="{% if message.messageFields.street is defined %}{{ message.messageFields.street }}{% endif %}"
+            >
+        </div>
+
+
+        <!-- City -->
+        <div class="row">
+            <label for="address">City</label>
+            <input
+              name="message[city]"
+              type="text"
+              id="address"
+              placeholder="Tokyo"
+              autocomplete="shipping locality"
+              value="{% if message.messageFields.city is defined %}{{ message.messageFields.city }}{% endif %}"
+            >
+        </div>
+
+        <!-- ZIP -->
+        <div class="row">
+            <label for="address">Postal Code</label>
+            <input
+              name="message[zip]"
+              type="text"
+              id="address"
+              placeholder="100 000"
+              autocomplete="shipping postal-code"
+              value="{% if message.messageFields.zip is defined %}{{ message.messageFields.zip }}{% endif %}"
+            >
+        </div>
+
+        <!-- Phone Number -->
+        <div class="row">
+            <label for="phone">Telephone Number</label>
+            <input
+              name="message[phone]"
+              type="text"
+              id="phone"
+              placeholder="+01 23 456 78 90"
+              value="{% if message.messageFields.phone is defined %}{{ message.messageFields.phone }}{% endif %}"
+              autocomplete="tel"
+            >
+        </div>
+
+        <!-- Profession -->
+        <div class="row">
+            <label for="profession">Profession</label>
+            <input
+              name="message[profession]"
+              type="text"
+              id="profession"
+              placeholder="Profession"
+              value="{% if message.messageFields.profession is defined %}{{ message.messageFields.profession }}{% endif %}"
+              autocomplete="off"
+            >
+        </div>
+
+        <!-- E-Mail -->
+        <div class="row">
+            <label for="email">E-Mail</label>
+            <input{{ message is defined and message ?  " class=\"error\""}}
+              name="fromEmail"
+              type="email"
+              id="email"
+              placeholder="abc@xyz.com"
+              value="{% if message is defined %}{{ message.fromEmail }}{% endif %}"
+              autocomplete="email"
+            required>
+        </div>
+
+        <!-- Message -->
+        <div class="row">
+            <label for="message">Please tell us something about yourself and your expectations towards the course.</label>
+            <textarea{{ message is defined and message ? " class=\"error\""}}
+              name="message[body]"
+              id="message"
+              autocomplete="off"
+            required>{% if message.messageFields.body is defined %}{{ message.messageFields.body }}{% endif %}</textarea>
+        </div>
+        
+        <!-- AGB -->
+        <div class="row">
+            <label for="agb">I agree with <a href="http://typo-summer.ch/agb/" target="_blank">summer-typo’s terms and conditions</a>.</label>
+            <input
+              name="message[agb]"
+              type="checkbox"
+              id="agb"
+              value="{% if message.messageFields.agb is defined %}{{ message.messageFields.agb }}{% endif %}"
+            required> {% if message is defined and message.messageFields.agb is not defined %}
+{# <p><small class="error">Please accept our terms and conditions in order to register.</small> </p> #}
+            {% endif %}
+        </div>
+
+        <div class="row">
+            <input type="submit" class="button small secondary" name="" value="Register"/>
+        </div>
+
+        <!-- Honeypot -->
+        <input type="text" name="biene" id="biene">
+
+    </form>
+{% endblock %}
